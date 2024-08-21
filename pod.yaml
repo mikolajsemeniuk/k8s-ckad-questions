@@ -1,0 +1,135 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-multi-container-pod # Name of the Pod
+  namespace: default # Namespace where the Pod will be created
+  labels:
+    app: myapp # Labels to identify the Pod
+    tier: backend # Additional label for categorizing the Pod
+  annotations:
+    description: "This is a sample pod with multiple containers, volume mounts, and advanced configurations." # Annotations provide metadata that can be used by external tools
+
+spec:
+  restartPolicy: Always # Restart policy for the Pod (Always, OnFailure, Never)
+  hostNetwork: false # Whether to use the host's network namespace
+  dnsPolicy: Default # DNS policy for the Pod
+  serviceAccountName: my-service-account # Service account to be used
+  priorityClassName: high-priority # Priority class for the Pod
+  schedulerName: default-scheduler # Scheduler to be used
+
+  containers:
+    - name: ubuntu-container # Name of the container
+      image: ubuntu # Container image
+      command: ["/bin/sh"] # Command to run in the container
+      args: ["-c", "echo Hello Kubernetes! && sleep 3600"] # Arguments for the command
+      ports:
+        - containerPort: 8080 # Port exposed by the container
+      env:
+        - name: ENV_VAR_1
+          value: "value1" # Static environment variable
+        - name: ENV_VAR_2
+          valueFrom:
+            secretKeyRef:
+              name: mysecret # Reference to a Kubernetes secret
+              key: password # Key within the secret
+      resources:
+        limits:
+          memory: "128Mi" # Memory limit
+          cpu: "500m" # CPU limit
+        requests:
+          memory: "64Mi" # Memory request
+          cpu: "250m" # CPU request
+      volumeMounts:
+        - name: config-volume
+          mountPath: /etc/config # Mounts the volume at /etc/config
+      livenessProbe:
+        httpGet:
+          path: /healthz # Path to check for liveness
+          port: 8080
+        initialDelaySeconds: 3 # Delay before starting probes
+        periodSeconds: 3 # Probe interval
+      readinessProbe:
+        httpGet:
+          path: /readiness # Path to check for readiness
+          port: 8080
+        initialDelaySeconds: 3
+        periodSeconds: 3
+
+    - name: nginx-container # Second container in the Pod
+      image: nginx # Container image
+      ports:
+        - containerPort: 80 # Port exposed by the container
+      volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html # Mounts the volume at /usr/share/nginx/html
+      envFrom:
+        - configMapRef:
+            name: my-config-map # References a ConfigMap for environment variables
+
+  initContainers:
+    - name: init-myservice
+      image: busybox
+      command: [
+          "sh",
+          "-c",
+          "until nslookup myservice; do echo waiting for myservice; sleep 2; done;",
+        ] # Command to run in the init container
+
+  volumes:
+    - name: config-volume
+      configMap:
+        name: my-config-map # ConfigMap to be used as a volume
+    - name: html
+      emptyDir: {} # EmptyDir volume that is created empty when the Pod is assigned to a node
+
+  securityContext:
+    runAsUser: 1000 # Run containers as this user
+    fsGroup: 2000 # File system group for the Pod
+
+  imagePullSecrets:
+    - name: myregistrykey # Secret for pulling images from a private registry
+
+  nodeSelector:
+    disktype: ssd # Node selector for scheduling
+
+  tolerations:
+    - key: "key1"
+      operator: "Equal"
+      value: "value1"
+      effect: "NoSchedule" # Toleration for NoSchedule taints
+    - key: "key2"
+      operator: "Exists"
+      effect: "NoExecute"
+      tolerationSeconds: 3600 # Toleration with a time limit
+
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        # The scheduler will only place the pod on nodes that meet the specified criteria
+        nodeSelectorTerms:
+          # This rule specifies that the pod must be scheduled on nodes labeled with kubernetes.io/e2e-az-name and the value must be either e2e-az1 or e2e-az2.
+          - matchExpressions:
+              - key: kubernetes.io/e2e-az-name
+                operator: In
+                values:
+                  - e2e-az1 # Node must be in either e2e-az1
+                  - e2e-az2 # or e2e-az2
+      # This rule is a preference, not a requirement. The scheduler will try to place the pod on nodes that meet the criteria, but it will still schedule the pod even if no such nodes are available
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 1 # Weight for preferred node selection
+          preference:
+            matchExpressions:
+              - key: another-node-label-key
+                operator: In
+                values:
+                  - another-node-label-value
+    # podAntiAffinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: security
+                operator: In
+                values:
+                  - S1 # Pods with the label key `security` and value `S1`
+          topologyKey: "kubernetes.io/hostname" # Must be co-located (on the same node)

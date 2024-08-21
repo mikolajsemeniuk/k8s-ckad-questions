@@ -1,0 +1,15 @@
+spec:
+  restartPolicy: Never
+  dnsPolicy: default
+  hostNetwork: false
+  priorityClassName:
+  serviceAccountName:
+  schedulerName:
+  containers:
+  initContainers:
+  volumes:
+  securityContext:
+  imagePullSecrets:
+  nodeSelector:
+  tolerations:
+  affinity:

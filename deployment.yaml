@@ -1,0 +1,27 @@
+apiVersion: apps/v1 # Specifies the API version of the Deployment object.
+kind: Deployment # Defines the object type as a Deployment.
+metadata:
+  name: my-deployment # Name of the Deployment.
+  namespace: default # Namespace where the Deployment is created. If not specified, it defaults to the 'default' namespace.
+  labels: # Labels are key-value pairs attached to objects. These labels are used to organize and select subsets of objects.
+    app: my-app
+  annotations: # Annotations are arbitrary metadata that can be used by tools and libraries to manage and interact with the object.
+    description: "This is a sample Deployment for my application."
+spec:
+  replicas: 3 # Number of desired pod replicas. The Deployment ensures that this number of pods are running.
+  selector: # Selector defines the label query that the Deployment uses to identify the Pods it should manage.
+    matchLabels: # Specifies a set of labels that the Deployment uses to select Pods. The Deployment manages Pods with these labels.
+      app: my-app
+  minReadySeconds: 10 # The minimum number of seconds a newly created Pod should be ready without any of its containers crashing, for it to be considered available.
+  revisionHistoryLimit: 10 # Number of old ReplicaSets to retain for rollback purposes. If set to 0, all old ReplicaSets will be cleaned up.
+  progressDeadlineSeconds: 600 # Time in seconds the Deployment controller waits before indicating (in the Deployment's status) that the Deployment has progressed.
+  strategy: # Specifies the strategy used to replace old Pods with new ones.
+    type: RollingUpdate # The deployment strategy. Options are RollingUpdate or Recreate.
+    rollingUpdate: # Parameters for the RollingUpdate strategy.
+      maxUnavailable: 1 # The maximum number of Pods that can be unavailable during the update process.
+      maxSurge: 1 # The maximum number of Pods that can be created above the desired number of Pods during the update process.
+  template: # Template defines the pods that should be created.
+    metadata:
+      labels: # Labels assigned to the Pods created by the Deployment.
+        app: my-app
+    spec:

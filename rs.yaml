@@ -1,0 +1,26 @@
+apiVersion: apps/v1 # Specifies the API version of the ReplicaSet object.
+kind: ReplicaSet # Defines the object type as a ReplicaSet.
+metadata:
+  name: my-replicaset # Name of the ReplicaSet.
+  namespace: default # Namespace where the ReplicaSet is created. If not specified, it defaults to the 'default' namespace.
+  labels: # Labels are key-value pairs attached to objects. These labels are used to organize and select subsets of objects.
+    app: my-app
+  annotations: # Annotations are arbitrary metadata that can be used by tools and libraries to manage and interact with the object.
+    description: "This is a sample ReplicaSet for my application."
+spec:
+  replicas: 3 # Number of desired pod replicas. The ReplicaSet ensures that this number of pods are running.
+  selector: # Selector defines the label query that the ReplicaSet uses to identify the Pods it should manage.
+    matchLabels: # Specifies a set of labels that the ReplicaSet uses to select Pods. The ReplicaSet manages Pods with these labels.
+      app: my-app
+    matchExpressions: # Allows more complex label selectors using key, operator, and values. This is optional and often not needed.
+      - key: tier
+        operator: In # Possible operators are In, NotIn, Exists, and DoesNotExist.
+        values:
+          - frontend
+  minReadySeconds: 10 # The minimum number of seconds a newly created Pod should be ready without any of its containers crashing, for it to be considered available.
+  template: # Template defines the pods that should be created.
+    metadata:
+      labels: # Labels assigned to the Pods created by the ReplicaSet.
+        app: my-app
+        tier: frontend
+    spec:
