@@ -18,5 +18,6 @@
 
 ## what to learn
 
-* create pod, replicaset, deployment
+* create update delete Pods, ReplicaSet, Deployments, Services, Namespaces, and Nodes
 * imperative command
+* NodePort, LoadBalancer, ClusterIP, Ingress
