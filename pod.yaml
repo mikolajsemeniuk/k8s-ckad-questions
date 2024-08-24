@@ -37,11 +37,6 @@ spec:
             secretKeyRef:
               name: mysecret # Reference to a Kubernetes secret
               key: password # Key within the secret
-      envFrom:
-        - configMapRef:
-            name: myconfigmap
-        - secretRef:
-            name: mysecret
       resources:
         limits:
           memory: "128Mi" # Memory limit
@@ -75,6 +70,8 @@ spec:
       envFrom:
         - configMapRef:
             name: my-config-map # References a ConfigMap for environment variables
+        - secretRef:
+            name: mysecret
 
   initContainers:
     - name: init-myservice
