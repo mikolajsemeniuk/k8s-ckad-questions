@@ -29,9 +29,19 @@ spec:
           value: "value1" # Static environment variable
         - name: ENV_VAR_2
           valueFrom:
+            configMapKeyRef:
+              name: myconfigmap # Reference to a Kubernetes ConfigMap
+              key: config_key
+        - name: ENV_VAR_3
+          valueFrom:
             secretKeyRef:
               name: mysecret # Reference to a Kubernetes secret
               key: password # Key within the secret
+      envFrom:
+        - configMapRef:
+            name: myconfigmap
+        - secretRef:
+            name: mysecret
       resources:
         limits:
           memory: "128Mi" # Memory limit
@@ -49,11 +59,11 @@ spec:
         initialDelaySeconds: 3 # Delay before starting probes
         periodSeconds: 3 # Probe interval
       readinessProbe:
-        httpGet:
-          path: /readiness # Path to check for readiness
-          port: 8080
-        initialDelaySeconds: 3
-        periodSeconds: 3
+        exec:
+          command: ["cat", "tmp"]
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        failureThreshold: 1
 
     - name: nginx-container # Second container in the Pod
       image: nginx # Container image
