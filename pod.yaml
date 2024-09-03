@@ -38,6 +38,11 @@ spec:
             secretKeyRef:
               name: mysecret # Reference to a Kubernetes secret
               key: password # Key within the secret
+      envFrom:
+        - configMapRef:
+            name: my-config-map # References a ConfigMap for environment variables
+        - secretRef:
+            name: mysecret
       resources:
         requests:
           memory: "64Mi" # Memory request
@@ -68,11 +73,6 @@ spec:
       volumeMounts:
         - name: html
           mountPath: /usr/share/nginx/html # Mounts the volume at /usr/share/nginx/html
-      envFrom:
-        - configMapRef:
-            name: my-config-map # References a ConfigMap for environment variables
-        - secretRef:
-            name: mysecret
 
   initContainers:
     - name: init-myservice
@@ -126,7 +126,7 @@ spec:
           # This rule specifies that the pod must be scheduled on nodes labeled with kubernetes.io/e2e-az-name and the value must be either e2e-az1 or e2e-az2.
           - matchExpressions:
               - key: kubernetes.io/e2e-az-name
-                operator: In
+                operator: In # NotIn Exists DoesNotExist Gt Lt
                 values:
                   - e2e-az1 # Node must be in either e2e-az1
                   - e2e-az2 # or e2e-az2
@@ -143,10 +143,10 @@ spec:
     # podAntiAffinity:
     podAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
+        - topologyKey: "kubernetes.io/hostname" # Must be co-located (on the same node)
+          labelSelector:
             matchExpressions:
               - key: security
                 operator: In
                 values:
                   - S1 # Pods with the label key `security` and value `S1`
-          topologyKey: "kubernetes.io/hostname" # Must be co-located (on the same node)

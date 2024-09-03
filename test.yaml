@@ -1,20 +1,95 @@
-apiVersion: apps/v1
-kind: ReplicaSet
+apiVersion: v1
+kind: Pod
 metadata:
   name: x
+  namespace: x
+  labels:
+    x: x
+  annotations:
+    description: x
 spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      x: x
-    matchExpressions:
-      - key: x
-        operator: In # NotIn Exists DoesNotExist
-        values:
-          - x
-  template:
-    metadata:
-      name: x
-    spec:
-      containers:
+  restartPolicy: OnFailure
+  dnsPolicy: default
+  hostNetwork: false
+  serviceAccountName: x
+  priorityClassName: x
+  schedulerName: x
+  containers:
+    - name: x
+      image: x
+      ports:
+        - hostPort: 80
+          containerPort: 80
+      env:
         - name: x
+          value: x
+        - name: x
+          valueFrom:
+            configMapKeyRef:
+              name: x
+              key: x
+        - name: x
+          valueFrom:
+            secretKeyRef:
+              name: x
+              key: x
+      envFrom:
+        - configMapRef:
+            name: x
+        - secretRef:
+            name: x
+      resources:
+        requests:
+          cpu: 0.1m
+          memory: 1Mi
+        limits:
+          cpu: 0.1m
+          memory: 1Mi
+        volumeMounts:
+          - name: x
+            mountPath: /etc/config
+      livenessProbe:
+        httpGet:
+          port: 8080
+          path: /healthz
+      readinessProbe:
+        exec:
+          command: []
+        initialDelaySeconds: 1
+        failureThreshold: 1
+        periodSeconds: 4
+  initContainers:
+  volumes:
+  securityContext:
+    runAsUser: 1000
+    capabilities:
+      add: ["MAC_ADMIN"]
+  imagePullSecrets:
+    - x
+  nodeSelector:
+    size: large
+  tolerations:
+    - key: x
+      value: x
+      operator: Equal # Exists
+      effect: PreferNoSchedule # NoSchedule, NoExecute
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: x
+                operator: In
+                values:
+                  - x
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 1
+          preference:
+            matchExpressions:
+
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - topologyKey: "kubernetes.io/hostname"
+          labelSelector:
+            matchExpressions:
+              - key: x

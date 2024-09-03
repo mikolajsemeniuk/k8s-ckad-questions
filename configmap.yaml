@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: x
 data:
-  APP_NAME: "MyApp"
+  APP_NAME: MyApp
