@@ -1,39 +1,20 @@
-containers:
-  - name: x
-    image: ubuntu
-    env:
-      - name: ENV_VAR_1
-        value: x
-      - name: ENV_VAR_2
-        valueFrom:
-          configMapKeyRef:
-            name: x
-            key: x
-      - name: ENV_VAR_3
-        valueFrom:
-          secretKeyRef:
-            name: x
-            key: x
-    envFrom:
-      - configMapRef:
-          name: x
-      - secretRef:
-          name: x
-    resources:
-      requests:
-        memory: 128Mi
-        cpu: 300m
-      limits:
-        memory: 256Mi
-        cpu: 500m
-    volumeMounts:
-      - name: x
-        mountPath: /etc/config
-    livenessProbe:
-      httpGet:
-        path: /healthz
-        port: 80
-    readinessProbe:
-      httpGet:
-        path: /healthz
-        port: 80
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: x
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      x: x
+    matchExpressions:
+      - key: x
+        operator: In # NotIn Exists DoesNotExist
+        values:
+          - x
+  template:
+    metadata:
+      name: x
+    spec:
+      containers:
+        - name: x

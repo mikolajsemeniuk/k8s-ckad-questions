@@ -24,6 +24,7 @@ spec:
       args: ["-c", "echo Hello Kubernetes! && sleep 3600"] # Arguments for the command
       ports:
         - containerPort: 8080 # Port exposed by the container
+          hostPort: 8080
       env:
         - name: ENV_VAR_1
           value: "value1" # Static environment variable
@@ -38,12 +39,12 @@ spec:
               name: mysecret # Reference to a Kubernetes secret
               key: password # Key within the secret
       resources:
-        limits:
-          memory: "128Mi" # Memory limit
-          cpu: "500m" # CPU limit
         requests:
           memory: "64Mi" # Memory request
           cpu: "250m" # CPU request
+        limits:
+          memory: "128Mi" # Memory limit
+          cpu: "500m" # CPU limit
       volumeMounts:
         - name: config-volume
           mountPath: /etc/config # Mounts the volume at /etc/config
@@ -92,22 +93,30 @@ spec:
   securityContext:
     runAsUser: 1000 # Run containers as this user
     fsGroup: 2000 # File system group for the Pod
+    # only supported on container level and not pod
+    # capabilities:
+    # add: ["MAC_ADMIN"]
 
   imagePullSecrets:
     - name: myregistrykey # Secret for pulling images from a private registry
 
+  # kubectl label node [NODE_NAME] [LABEL_KEY]=[LABEL_VALUE]
   nodeSelector:
-    disktype: ssd # Node selector for scheduling
+    size: Large
 
+  # kubectl taint node [NODE_NAME] [KEY]=[VALUE]:[EFFECT]
   tolerations:
-    - key: "key1"
-      operator: "Equal"
-      value: "value1"
-      effect: "NoSchedule" # Toleration for NoSchedule taints
-    - key: "key2"
-      operator: "Exists"
-      effect: "NoExecute"
+    - key: key1
+      operator: Equal
+      value: value1
+      effect: NoSchedule # Prevents new pods from being scheduled on the node. Existing pods remain unaffected.
+    - key: key2
+      operator: Exists
+      effect: NoExecute # Prevents new pods from being scheduled on the node and evicts existing pods that do not tolerate the taint.
       tolerationSeconds: 3600 # Toleration with a time limit
+    - key: key3
+      operator: Exists
+      effect: PreferNoSchedule
 
   affinity:
     nodeAffinity:
@@ -130,6 +139,7 @@ spec:
                 operator: In
                 values:
                   - another-node-label-value
+
     # podAntiAffinity:
     podAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:

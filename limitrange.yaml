@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: limit-range-example
+  namespace: your-namespace
+spec:
+  limits:
+    - default: # sets default limit
+        cpu: 500m # Default CPU limit for a container in this namespace (0.5 vCPU)
+        memory: 256Mi # Default memory limit for a container in this namespace
+      defaultRequest:
+        cpu: 250m # Default CPU request for a container in this namespace (0.25 vCPU)
+        memory: 128Mi # Default memory request for a container in this namespace
+      max:
+        cpu: 1 # Maximum CPU limit a container can request (1 vCPU)
+        memory: 512Mi # Maximum memory limit a container can request
+      min:
+        cpu: 100m # Minimum CPU request a container can make (0.1 vCPU)
+        memory: 64Mi # Minimum memory request a container can make
+      type: Container
