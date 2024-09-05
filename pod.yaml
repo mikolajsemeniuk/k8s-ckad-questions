@@ -59,6 +59,8 @@ spec:
           port: 8080
         initialDelaySeconds: 3 # Delay before starting probes
         periodSeconds: 3 # Probe interval
+        # tcpSocket:
+        #   port: 3306
       readinessProbe:
         exec:
           command: ["cat", "tmp"]
@@ -90,15 +92,15 @@ spec:
     - name: html
       emptyDir: {} # EmptyDir volume that is created empty when the Pod is assigned to a node
 
+  imagePullSecrets:
+    - name: myregistrykey # Secret for pulling images from a private registry
+
   securityContext:
     runAsUser: 1000 # Run containers as this user
     fsGroup: 2000 # File system group for the Pod
     # only supported on container level and not pod
     # capabilities:
     # add: ["MAC_ADMIN"]
-
-  imagePullSecrets:
-    - name: myregistrykey # Secret for pulling images from a private registry
 
   # kubectl label node [NODE_NAME] [LABEL_KEY]=[LABEL_VALUE]
   nodeSelector:

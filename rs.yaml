@@ -14,7 +14,7 @@ spec:
       app: my-app
     matchExpressions: # Allows more complex label selectors using key, operator, and values. This is optional and often not needed.
       - key: tier
-        operator: In # Possible operators are In, NotIn, Exists, and DoesNotExist.
+        operator: In # Possible operators are In, NotIn, Exists, and DoesNotExist Gt Lt.
         values:
           - frontend
   minReadySeconds: 10 # The minimum number of seconds a newly created Pod should be ready without any of its containers crashing, for it to be considered available.
