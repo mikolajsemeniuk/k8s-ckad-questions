@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: simple-job
+spec:
+  # The backoffLimit: 4 means the Job will retry 4 times in case of failure.
+  backoffLimit: 4
+  template:
+    spec:
+      containers:
+        - name: job-container
+          image: busybox
+          command: ["echo", "Hello from Kubernetes Job!"]
+      restartPolicy: Never
