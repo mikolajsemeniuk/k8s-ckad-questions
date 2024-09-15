@@ -21,3 +21,5 @@
 * create update delete Pods, ReplicaSet, Deployments, Services, Namespaces, and Nodes
 * imperative command
 * NodePort, LoadBalancer, ClusterIP, Ingress
+
+write clusterIP, nodePort, ingress, network policy, stateful sets, headless service

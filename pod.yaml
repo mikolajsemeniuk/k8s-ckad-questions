@@ -90,7 +90,12 @@ spec:
       configMap:
         name: my-config-map # ConfigMap to be used as a volume
     - name: html
-      emptyDir: {} # EmptyDir volume that is created empty when the Pod is assigned to a node
+      hostPath:
+        path: /data
+        type: Directory
+    - name: x
+      persistentVolumeClaim:
+        claimName: x
 
   imagePullSecrets:
     - name: myregistrykey # Secret for pulling images from a private registry

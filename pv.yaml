@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: existing-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce # ReadOnlyMany ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain # Delete Recycle
+  storageClassName: manual
+  hostPath:
+    path: "/mnt/data"
