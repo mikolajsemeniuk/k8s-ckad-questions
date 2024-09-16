@@ -22,4 +22,10 @@
 * imperative command
 * NodePort, LoadBalancer, ClusterIP, Ingress
 
-write clusterIP, nodePort, ingress, network policy, stateful sets, headless service
+clusterIP, nodePort, ingress, network policy, stateful sets, headless service
+
+kubectl auth can-i create deployments --as dev-user
+
+Role, RoleBinding, ClusterRole, ClusterRoleBinding, RBAC, ABAC
+
+CustomController, CustomResourceDefinition, Operator / OperatorHub.io
