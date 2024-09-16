@@ -16,12 +16,6 @@
 * Service Accounts and RBAC
 * Security Contexts
 
-## what to learn
-
-* create update delete Pods, ReplicaSet, Deployments, Services, Namespaces, and Nodes
-* imperative command
-* NodePort, LoadBalancer, ClusterIP, Ingress
-
 clusterIP, nodePort, ingress, network policy, stateful sets, headless service
 
 kubectl auth can-i create deployments --as dev-user
