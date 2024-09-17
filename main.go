@@ -6,22 +6,20 @@ import (
 )
 
 func main() {
-	// Example slice of strings
-	var elements []string
-	elements = append(elements, []string{"Pod", "Job", "CronJob", "ReplicaSet", "Deployment"}...)
-	elements = append(elements, []string{"ConfigMap", "Secret", "PersistentVolume", "PersistentVolumeClaim"}...)
-	elements = append(elements, []string{"NodePort", "ClusterIP", "Ingress", "StatefulSet", "HeadlessService"}...)
-	elements = append(elements, []string{"Role", "RoleBinding", "ClusterRole", "ClusterRoleBinding"}...)
-	elements = append(elements, []string{"NetworkPolicy"}...)
+	var items []string
+	items = append(items, []string{"Pod", "Job", "CronJob", "ReplicaSet", "Deployment"}...)
+	items = append(items, []string{"ConfigMap", "Secret", "PersistentVolume", "PersistentVolumeClaim"}...)
+	items = append(items, []string{"NodePort", "ClusterIP", "Ingress", "StatefulSet", "HeadlessService"}...)
+	items = append(items, []string{"Role", "RoleBinding", "ClusterRole", "ClusterRoleBinding", "NetworkPolicy"}...)
 
-	for len(elements) > 0 {
+	for len(items) > 0 {
 		// Randomly select an index from the slice.
-		index := rand.Intn(len(elements))
+		index := rand.Intn(len(items))
 
 		// Draw and display the element.
-		fmt.Println(elements[index])
+		fmt.Println(items[index])
 
 		// Remove the element from the slice.
-		elements = append(elements[:index], elements[index+1:]...)
+		items = append(items[:index], items[index+1:]...)
 	}
 }
