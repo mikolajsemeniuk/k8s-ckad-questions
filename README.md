@@ -6,20 +6,12 @@
 * Resource Quotas and Limits
 * Observability Health checks (Liveness and Readiness Probes)
 * Labels, Selectors, and Annotations
+* Security Contexts
+* Jobs and CronJobs
+* Types of volumes (emptyDir, hostPath, persistentVolumeClaim)
+* Persistent Volumes and Persistent Volume Claims
 * ClusterIP, NodePort, LoadBalancer, ExternalName
 * Kubernetes DNS, Headless Services
 * Network policies
-* Types of volumes (emptyDir, hostPath, persistentVolumeClaim)
-* Persistent Volumes and Persistent Volume Claims
 * Stateful applications, StatefulSet features and use-cases
-* Jobs and CronJobs
 * Service Accounts and RBAC
-* Security Contexts
-
-clusterIP, nodePort, ingress, network policy, stateful sets, headless service
-
-kubectl auth can-i create deployments --as dev-user
-
-Role, RoleBinding, ClusterRole, ClusterRoleBinding, RBAC, ABAC
-
-CustomController, CustomResourceDefinition, Operator / OperatorHub.io

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  serviceName: my-app-headless # The headless service used to manage the network identity.
+  replicas: 3 # Number of replicas/pods to create.
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: my-app-container
+          image: my-app-image:latest # Your container image.
+          ports:
+            - containerPort: 8080 # The port where the container listens.

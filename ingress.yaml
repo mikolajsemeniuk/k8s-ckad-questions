@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1 # Defines the version of the API for Ingress resources.
+kind: Ingress
+metadata:
+  name: my-ingress # Name of the ingress resource.
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: / # Annotation for NGINX Ingress Controller to rewrite URLs.
+spec:
+  rules:
+    - host: myapp.example.com # The host to route traffic to. Change this to your desired domain.
+      http:
+        paths:
+          - path: / # The path to route traffic for (root path).
+            pathType: Prefix # Matches paths with this prefix.
+            backend:
+              service:
+                name: my-clusterip-service # Name of the service to route traffic to.
+                port:
+                  number: 80 # The port of the service to target.
+          - path: /api # Another path to route traffic (for example, API requests).
+            pathType: Prefix # Exact ImplementationSpecific
+            backend:
+              service:
+                name: my-api-service # Name of the backend service for /api requests.
+                port:
+                  number: 8080 # The port of the backend service to target.

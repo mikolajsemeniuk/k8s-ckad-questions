@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: read-nodes
+subjects:
+  - kind: User # Subject can be a user, group, or service account.
+    name: jane
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole # Refers to a ClusterRole.
+  name: node-reader # The name of the ClusterRole to bind.
+  apiGroup: rbac.authorization.k8s.io

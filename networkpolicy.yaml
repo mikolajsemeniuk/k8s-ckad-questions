@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-specific-traffic # Name of the network policy.
+  namespace: default # Namespace where the policy is applied.
+spec:
+  podSelector:
+    matchLabels:
+      app: my-app # Selects the pods with the label 'app: my-app'.
+  policyTypes:
+    - Ingress # Controls incoming traffic to selected pods.
+    - Egress # Controls outgoing traffic from selected pods.
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              role: backend # Allows traffic from pods with the label 'role: backend'.
+        - namespaceSelector:
+            matchLabels:
+              project: my-project # Allows traffic from any pod in the namespace with the label 'project: my-project'.
+      ports:
+        - protocol: TCP
+          port: 80 # Allows traffic on port 80.
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 192.168.1.0/24 # Allows traffic to a specific CIDR range.
+            except:
+              - 192.168.1.5/32 # Except traffic to this specific IP.
+      ports:
+        - protocol: TCP
+          port: 443 # Allows outgoing traffic on port 443 (HTTPS).
