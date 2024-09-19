@@ -1,12 +1,18 @@
-apiVersion: batch/v1
-kind: CronJob
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
   name: x
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  schedule: "* * * * *"
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-            -
+  rules:
+    - host: localhost
+      http:
+        paths:
+          - path: /app
+            pathType: Prefix
+            backend:
+              service:
+                name: x
+                port:
+                  number: 80

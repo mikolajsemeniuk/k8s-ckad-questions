@@ -8,5 +8,17 @@ spec:
     app: my-app # Selects the pods that have the label 'app: my-app'.
   ports:
     - protocol: TCP # Can also be UDP or SCTP, depending on your application’s requirements.
-      port: 80 # The port that will be exposed internally in the cluster.
       targetPort: 8080 # The port where your application is running inside the pod.
+      port: 80 # The port that will be exposed internally in the cluster.
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  containers:
+    - name: x
+      image: nginx

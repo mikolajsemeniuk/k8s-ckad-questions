@@ -6,20 +6,78 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: / # Annotation for NGINX Ingress Controller to rewrite URLs.
 spec:
   rules:
-    - host: myapp.example.com # The host to route traffic to. Change this to your desired domain.
+    - host: localhost # The host to route traffic to. Change this to your desired domain.
       http:
         paths:
-          - path: / # The path to route traffic for (root path).
+          - path: /app1 # The path to route traffic for (root path).
             pathType: Prefix # Matches paths with this prefix.
             backend:
               service:
-                name: my-clusterip-service # Name of the service to route traffic to.
+                name: nginx-app1 # Name of the service to route traffic to.
                 port:
                   number: 80 # The port of the service to target.
-          - path: /api # Another path to route traffic (for example, API requests).
+          - path: /app2 # Another path to route traffic (for example, API requests).
             pathType: Prefix # Exact ImplementationSpecific
             backend:
               service:
-                name: my-api-service # Name of the backend service for /api requests.
+                name: nginx-app2 # Name of the backend service for /api requests.
                 port:
-                  number: 8080 # The port of the backend service to target.
+                  number: 80 # The port of the backend service to target.
+
+---
+# nginx-app1-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-app1
+  labels:
+    app: nginx-app1
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-app1
+spec:
+  selector:
+    app: nginx-app1
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+
+---
+# nginx-app2-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-app2
+  labels:
+    app: nginx-app2
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-app2
+spec:
+  selector:
+    app: nginx-app2
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
