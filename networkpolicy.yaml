@@ -1,32 +1,89 @@
+# kubectl create namespace netpol-test
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  namespace: netpol-test
+  labels:
+    app: web
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+        - containerPort: 80
+
+---
+# kubectl apply -f nginx.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  namespace: netpol-test
+  labels:
+    app: client
+spec:
+  containers:
+    - name: busybox
+      image: busybox
+      command: ["sleep", "3600"]
+
+---
+# kubectl apply -f busybox.yaml
+# kubectl exec -it busybox -n netpol-test -- /bin/sh
+# wget --spider --timeout=1 nginx
+# exit
+
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-specific-traffic # Name of the network policy.
-  namespace: default # Namespace where the policy is applied.
+  namespace: netpol-test # Namespace where the policy is applied.
 spec:
   podSelector:
     matchLabels:
-      app: my-app # Selects the pods with the label 'app: my-app'.
+      app: web # Selects the pods with the label 'app: my-app'.
   policyTypes:
     - Ingress # Controls incoming traffic to selected pods.
-    - Egress # Controls outgoing traffic from selected pods.
+    # - Egress # Controls outgoing traffic from selected pods.
   ingress:
     - from:
         - podSelector:
             matchLabels:
-              role: backend # Allows traffic from pods with the label 'role: backend'.
-        - namespaceSelector:
-            matchLabels:
-              project: my-project # Allows traffic from any pod in the namespace with the label 'project: my-project'.
+              app: client # Allows traffic from pods with the label 'role: backend'.
+        # - namespaceSelector:
+        #     matchLabels:
+        #       project: my-project # Allows traffic from any pod in the namespace with the label 'project: my-project'.
       ports:
         - protocol: TCP
           port: 80 # Allows traffic on port 80.
-  egress:
-    - to:
-        - ipBlock:
-            cidr: 192.168.1.0/24 # Allows traffic to a specific CIDR range.
-            except:
-              - 192.168.1.5/32 # Except traffic to this specific IP.
-      ports:
-        - protocol: TCP
-          port: 443 # Allows outgoing traffic on port 443 (HTTPS).
+  # egress:
+  #   - to:
+  #       - ipBlock:
+  #           cidr: 192.168.1.0/24 # Allows traffic to a specific CIDR range.
+  #           except:
+  #             - 192.168.1.5/32 # Except traffic to this specific IP.
+  #     ports:
+  #       - protocol: TCP
+  #         port: 443 # Allows outgoing traffic on port 443 (HTTPS).
+#
+#
+# kubectl apply -f networkpolicy.yaml
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox-no-access
+  namespace: netpol-test
+spec:
+  containers:
+    - name: busybox
+      image: busybox
+      command: ["sleep", "3600"]
+#
+# kubectl apply -f busybox-no-access.yaml
+# kubectl exec -it busybox-no-access -n netpol-test -- /bin/sh
+# wget --spider --timeout=1 nginx

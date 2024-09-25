@@ -7,7 +7,21 @@ metadata:
 spec:
   clusterIP: None # This makes the service headless.
   selector:
-    app: my-app
+    app: nginx
   ports:
     - port: 80 # Port for communication.
       targetPort: 8080 # Target port where the app listens.
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-pvc
+  labels:
+    app: nginx
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

@@ -1,13 +1,38 @@
+# kubectl config use-context user1-context
+
+# # Try listing pods in the 'default' namespace
+# kubectl get pods -n default
+
+# kubectl config use-context user2-context
+
+# # Try listing pods in the 'default' namespace
+# kubectl get pods -n default
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: read-pods
+  name: user1-rolebinding
   namespace: default # Binds the role to the "default" namespace.
 subjects:
   - kind: User # Binds the role to a user (could also be "ServiceAccount" or "Group").
-    name: jane # The name of the user.
+    name: user1 # The name of the user.
     apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role # Refers to a Role.
-  name: pod-reader # Name of the Role to bind.
+  name: user1-role # Name of the Role to bind.
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: user2-rolebinding
+  namespace: default # This RoleBinding applies in the 'default' namespace
+subjects:
+  - kind: User
+    name: user2
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: user2-role # Refers to the Role created for user2
   apiGroup: rbac.authorization.k8s.io

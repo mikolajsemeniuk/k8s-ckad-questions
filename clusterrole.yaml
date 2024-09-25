@@ -1,8 +1,50 @@
+# # Generate the private key for user1
+# openssl genrsa -out user1.key 2048
+
+# # Create a certificate signing request (CSR) for user1
+# openssl req -new -key user1.key -out user1.csr -subj "/CN=user1/O=users"
+
+# # Generate the private key for user2
+# openssl genrsa -out user2.key 2048
+
+# # Create a CSR for user2
+# openssl req -new -key user2.key -out user2.csr -subj "/CN=user2/O=users"
+
+# # Sign user1's CSR with the Kubernetes CA
+# openssl x509 -req -in user1.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out user1.crt -days 365
+
+# # Sign user2's CSR with the Kubernetes CA
+# openssl x509 -req -in user2.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out user2.crt -days 365
+
+# # Add user1 to kubeconfig
+# kubectl config set-credentials user1 --client-certificate=/path/to/user1.crt --client-key=/path/to/user1.key
+
+# # Add user2 to kubeconfig
+# kubectl config set-credentials user2 --client-certificate=/path/to/user2.crt --client-key=/path/to/user2.key
+
+# # Set a context for user1
+# kubectl config set-context user1-context --cluster=<your-cluster-name> --namespace=default --user=user1
+
+# # Set a context for user2
+# kubectl config set-context user2-context --cluster=<your-cluster-name> --namespace=default --user=user2
+
+# kubectl apply -f clusterrole.yaml
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: node-reader
+  name: basic-role
 rules:
   - apiGroups: [""] # Core API group.
-    resources: ["nodes"] # Cluster-scoped resource.
+    resources: ["pods"] # "nodes" Cluster-scoped resource.
     verbs: ["get", "list"] # Allowed actions on the resource.
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: restricted-role
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get"]

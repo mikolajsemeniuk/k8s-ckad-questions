@@ -1,12 +1,40 @@
+# kubectl apply -f clusterrolebinding.yaml
+#
+# # Switch to the user1-context and try listing the pods:
+# kubectl config use-context user1-context
+
+# # Try listing pods
+# kubectl get pods
+
+# # Switch to the user2-context and try listing the pods:
+# kubectl config use-context user2-context
+
+# # Try listing pods
+# kubectl get pods
+
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: read-nodes
+  name: user1-rolebinding
 subjects:
   - kind: User # Subject can be a user, group, or service account.
-    name: jane
+    name: user1
     apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole # Refers to a ClusterRole.
-  name: node-reader # The name of the ClusterRole to bind.
+  name: basic-role # The name of the ClusterRole to bind.
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: user2-rolebinding
+subjects:
+  - kind: User
+    name: user2
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: restricted-role
   apiGroup: rbac.authorization.k8s.io
