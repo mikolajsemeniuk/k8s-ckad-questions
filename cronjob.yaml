@@ -1,15 +1,18 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: simple-cronjob
+  name: dice
 spec:
-  schedule: "*/5 * * * *" # This means it runs every 5 minutes
+  schedule: "*/1 * * * *" # Runs every minute
   jobTemplate:
     spec:
+      backoffLimit: 25 # specifies the maximum number of retry attempts for a job before it is considered "failed"
+      activeDeadlineSeconds: 20 # Fail job if not completed within 20 seconds
+      completions: 1 # Ensure the task completes only once
+      parallelism: 1 # Ensure the task is not asynchronous
       template:
         spec:
           containers:
-            - name: cronjob-container
-              image: busybox
-              command: ["echo", "Hello from Kubernetes CronJob!"]
+            - image: kodekloud/throw-dice
+              name: throw-dice
           restartPolicy: Never

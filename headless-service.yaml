@@ -1,7 +1,9 @@
+# Headless service can be used for master writes and sleeves reads in mysql service
+# then service creates mysql-0, mysql-1, mysql-2 etc...
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-app-headless
+  name: mysql-h # THIS HAVE TO MATCH
   labels:
     app: my-app
 spec:
@@ -11,6 +13,10 @@ spec:
   ports:
     - port: 80 # Port for communication.
       targetPort: 8080 # Target port where the app listens.
+  subdomain: mysql-h # THIS HAVE TO MATCH metadata.name
+  hostname: mysql-pod # optional but worth to provide
+  # if hostname was specified all pods have the same name
+  # mysql-pod.mysql-h.default.svc.cluster.local
 
 ---
 apiVersion: v1

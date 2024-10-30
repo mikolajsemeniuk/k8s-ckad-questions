@@ -87,3 +87,36 @@ spec:
 # kubectl apply -f busybox-no-access.yaml
 # kubectl exec -it busybox-no-access -n netpol-test -- /bin/sh
 # wget --spider --timeout=1 nginx
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: example-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: my-app
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              access: allowed
+      ports:
+        - protocol: TCP
+          port: 8080
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 10.0.0.0/24
+        - ipBlock:
+            cidr: 192.168.1.0/24
+      ports:
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53

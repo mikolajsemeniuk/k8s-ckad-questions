@@ -53,14 +53,15 @@ spec:
       volumeMounts:
         - name: config-volume
           mountPath: /etc/config # Mounts the volume at /etc/config
+          readOnly: true
       livenessProbe:
         httpGet:
           path: /healthz # Path to check for liveness
           port: 8080
         initialDelaySeconds: 3 # Delay before starting probes
         periodSeconds: 3 # Probe interval
-        # tcpSocket:
-        #   port: 3306
+        tcpSocket:
+          port: 3306
       readinessProbe:
         exec:
           command: ["cat", "tmp"]
@@ -89,13 +90,33 @@ spec:
     - name: config-volume
       configMap:
         name: my-config-map # ConfigMap to be used as a volume
+
+    - name: secret-volume
+      secret:
+        secretName: my-secret
+
     - name: html
       hostPath:
         path: /data
-        type: Directory
+        type: Directory # Can be Directory, File, Socket, or CharDevice
+
     - name: x
       persistentVolumeClaim:
         claimName: x
+
+    - name: cache-volume
+      emptyDir: {}
+
+    - name: azure-file-volume
+      azureFile:
+        secretName: azure-secret # Secret containing storage credentials
+        shareName: my-share
+        readOnly: true
+
+    - name: ebs-volume
+      awsElasticBlockStore:
+        volumeID: vol-0abcdef1234567890
+        fsType: ext4
 
   imagePullSecrets:
     - name: myregistrykey # Secret for pulling images from a private registry
@@ -114,7 +135,7 @@ spec:
   # kubectl taint node [NODE_NAME] [KEY]=[VALUE]:[EFFECT]
   tolerations:
     - key: key1
-      operator: Equal
+      operator: Equal # Only Equal Exists
       value: value1
       effect: NoSchedule # Prevents new pods from being scheduled on the node. Existing pods remain unaffected.
     - key: key2
