@@ -66,8 +66,8 @@ spec:
         exec:
           command: ["cat", "tmp"]
         initialDelaySeconds: 5
-        periodSeconds: 10
-        failureThreshold: 1
+        periodSeconds: 10 # This field defines how often (in seconds) the readinessProbe is executed.
+        failureThreshold: 1 # This field defines the number of consecutive failed probe attempts that Kubernetes will tolerate before considering the container as not ready.
 
     - name: nginx-container # Second container in the Pod
       image: nginx # Container image
@@ -127,6 +127,8 @@ spec:
     # only supported on container level and not pod
     # capabilities:
     # add: ["MAC_ADMIN"]
+    # allowPrivilegeEscalation: false  # add
+    # privileged: false                # add
 
   # kubectl label node [NODE_NAME] [LABEL_KEY]=[LABEL_VALUE]
   nodeSelector:

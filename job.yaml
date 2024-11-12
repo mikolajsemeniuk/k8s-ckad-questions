@@ -5,6 +5,10 @@ metadata:
 spec:
   # The backoffLimit: 4 means the Job will retry 4 times in case of failure.
   backoffLimit: 4
+  activeDeadlineSeconds: 5
+  completions: 5
+  parallelism: 5
+  ttlSecondsAfterFinished: 5
   template:
     spec:
       containers:

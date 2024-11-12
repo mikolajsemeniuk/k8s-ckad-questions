@@ -4,15 +4,30 @@ metadata:
   name: dice
 spec:
   schedule: "*/1 * * * *" # Runs every minute
+
+  # Allow: Allows jobs to run concurrently (default setting).
+  # Forbid: Prevents a new job from starting if the previous job is still running.
+  # Replace: Stops the previous job and starts a new one if the previous job is still running when a new schedule is triggered.
+  concurrencyPolicy: Forbid # Options: Allow (default), Forbid, Replace
+
+  # Limits on job history retention
+  successfulJobsHistoryLimit: 5 # Retain history of last 5 successful jobs
+  failedJobsHistoryLimit: 3 # Retain history of last 3 failed jobs
+
+  # Deadline in seconds to start the job if it misses the scheduled time
+  # If a job’s scheduled time passes but Kubernetes cannot start it (for example, due to a temporary issue with the cluster or resource availability),
+  # startingDeadlineSeconds allows Kubernetes to still start the missed job if it is within this set timeframe.
+  startingDeadlineSeconds: 100
   jobTemplate:
     spec:
       backoffLimit: 25 # specifies the maximum number of retry attempts for a job before it is considered "failed"
       activeDeadlineSeconds: 20 # Fail job if not completed within 20 seconds
       completions: 1 # Ensure the task completes only once
       parallelism: 1 # Ensure the task is not asynchronous
+      ttlSecondsAfterFinished: 300
       template:
         spec:
+          restartPolicy: Never # must have
           containers:
             - image: kodekloud/throw-dice
               name: throw-dice
-          restartPolicy: Never
