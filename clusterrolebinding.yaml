@@ -17,7 +17,7 @@ kind: ClusterRoleBinding
 metadata:
   name: user1-rolebinding
 subjects:
-  - kind: User # Subject can be a user, group, or service account.
+  - kind: User # Subject can be a User, Group, or ServiceAccount.
     name: user1
     apiGroup: rbac.authorization.k8s.io # for users/group "" for sa
 roleRef:
