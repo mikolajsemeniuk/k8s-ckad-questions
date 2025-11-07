@@ -3,11 +3,15 @@ kind: Job
 metadata:
   name: simple-job
 spec:
-  # The backoffLimit: 4 means the Job will retry 4 times in case of failure.
+  # Retry failed pods up to 4 times before marking the Job as failed.
   backoffLimit: 4
+  # Abort the Job if it runs longer than 5 seconds.
   activeDeadlineSeconds: 5
+  # Require 5 successful pod completions to consider the Job complete.
   completions: 5
+  # Run up to 5 pods simultaneously to reach the completions faster.
   parallelism: 5
+  # Clean up the Job and its pods 5 seconds after it finishes.
   ttlSecondsAfterFinished: 5
   template:
     spec:
