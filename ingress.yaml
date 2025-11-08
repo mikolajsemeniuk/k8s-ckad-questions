@@ -10,7 +10,7 @@ spec:
       http:
         paths:
           - path: /app1 # The path to route traffic for (root path).
-            pathType: Prefix # Matches paths with this prefix.
+            pathType: Prefix # or Exact Matches paths with this prefix.
             backend:
               service:
                 name: nginx-app1 # Name of the service to route traffic to.

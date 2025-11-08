@@ -1,3 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-headless
+  labels:
+    app: mysql
+spec:
+  clusterIP: None # HEADLESS!
+  selector:
+    app: mysql
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: 3306
+---
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -6,7 +22,7 @@ metadata:
     app: my-app
 spec:
   serviceName: my-app-headless # The headless service used to manage the network identity.
-  replicas: 3 # Number of replicas/pods to create.
+  replicas: 3 
   selector:
     matchLabels:
       app: nginx
