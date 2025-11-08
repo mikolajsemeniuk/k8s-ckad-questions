@@ -16,7 +16,17 @@ spec:
   serviceAccountName: my-service-account # Service account to be used
   priorityClassName: high-priority # Priority class for the Pod
   schedulerName: default-scheduler # Scheduler to be used
+  imagePullSecrets:
+    - name: myregistrykey # Secret for pulling images from a private registry
 
+  securityContext:
+    runAsUser: 1000 # Run containers as this user
+    fsGroup: 2000 # File system group for the Pod
+    # only supported on container level and not pod
+    # capabilities:
+    # add: ["MAC_ADMIN"]
+    # allowPrivilegeEscalation: false  # add
+    # privileged: false                # add
   containers:
     - name: ubuntu-container # Name of the container
       image: ubuntu # Container image
@@ -117,18 +127,6 @@ spec:
       awsElasticBlockStore:
         volumeID: vol-0abcdef1234567890
         fsType: ext4
-
-  imagePullSecrets:
-    - name: myregistrykey # Secret for pulling images from a private registry
-
-  securityContext:
-    runAsUser: 1000 # Run containers as this user
-    fsGroup: 2000 # File system group for the Pod
-    # only supported on container level and not pod
-    # capabilities:
-    # add: ["MAC_ADMIN"]
-    # allowPrivilegeEscalation: false  # add
-    # privileged: false                # add
 
   # kubectl label node [NODE_NAME] [LABEL_KEY]=[LABEL_VALUE]
   nodeSelector:
