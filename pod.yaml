@@ -11,8 +11,8 @@ metadata:
 
 spec:
   restartPolicy: Always # Restart policy for the Pod (Always, OnFailure, Never)
-  hostNetwork: false # Whether to use the host's network namespace
   dnsPolicy: Default # DNS policy for the Pod
+  hostNetwork: false # Whether to use the host's network namespace
   serviceAccountName: my-service-account # Service account to be used
   priorityClassName: high-priority # Priority class for the Pod
   schedulerName: default-scheduler # Scheduler to be used
