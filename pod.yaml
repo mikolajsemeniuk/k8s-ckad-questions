@@ -106,14 +106,14 @@ spec:
       secret:
         secretName: my-secret
 
+    - name: x
+      persistentVolumeClaim:
+        claimName: x
+
     - name: html
       hostPath:
         path: /data
         type: Directory # Can be Directory, File, Socket, or CharDevice
-
-    - name: x
-      persistentVolumeClaim:
-        claimName: x
 
     - name: cache-volume
       emptyDir: {}
@@ -137,8 +137,8 @@ spec:
   # kubectl taint node [NODE_NAME] [KEY]=[VALUE]:[EFFECT]
   tolerations:
     - key: key1
-      operator: Equal # Only Equal Exists
       value: value1
+      operator: Equal # Only Equal Exists
       effect: NoSchedule # Prevents new pods from being scheduled on the node. Existing pods remain unaffected.
     - key: key2
       operator: Exists
