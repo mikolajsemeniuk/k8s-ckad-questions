@@ -149,34 +149,100 @@ spec:
       effect: PreferNoSchedule
 
   affinity:
+    ############################################################
+    # 🧱 NODE AFFINITY — dopasowanie do etykiet NODE'ÓW
+    ############################################################
     nodeAffinity:
+      # 🔸 Twarde wymagania — Pod zostanie zaplanowany tylko na node,
+      # który spełnia jeden z poniższych nodeSelectorTerms
       requiredDuringSchedulingIgnoredDuringExecution:
-        # The scheduler will only place the pod on nodes that meet the specified criteria
         nodeSelectorTerms:
-          # This rule specifies that the pod must be scheduled on nodes labeled with kubernetes.io/e2e-az-name and the value must be either e2e-az1 or e2e-az2.
           - matchExpressions:
               - key: kubernetes.io/e2e-az-name
-                operator: In # NotIn Exists DoesNotExist Gt Lt
+                operator: In           # Node label value must be in the list
                 values:
-                  - e2e-az1 # Node must be in either e2e-az1
-                  - e2e-az2 # or e2e-az2
-      # This rule is a preference, not a requirement. The scheduler will try to place the pod on nodes that meet the criteria, but it will still schedule the pod even if no such nodes are available
+                  - e2e-az1
+              - key: size
+                operator: NotIn        # Node label value must NOT be in the list
+                values:
+                  - small
+              - key: disk-type
+                operator: Exists       # Node must have this label (any value)
+              - key: gpu
+                operator: DoesNotExist # Node must NOT have this label
+              - key: cpu-count
+                operator: Gt           # Node label value (numeric) must be > X
+                values:
+                  - "4"
+              - key: memory-size-gb
+                operator: Lt           # Node label value (numeric) must be < X
+                values:
+                  - "128"
+
+      # 🔹 Miękkie preferencje — scheduler będzie preferował nody,
+      # które spełniają poniższe warunki, ale nie są one obowiązkowe
       preferredDuringSchedulingIgnoredDuringExecution:
-        - weight: 1 # Weight for preferred node selection
+        - weight: 10
           preference:
             matchExpressions:
-              - key: another-node-label-key
+              - key: disk
                 operator: In
                 values:
-                  - another-node-label-value
-
-    # podAntiAffinity:
-    podAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        - topologyKey: "kubernetes.io/hostname" # Must be co-located (on the same node)
-          labelSelector:
+                  - ssd
+                  - nvme
+        - weight: 5
+          preference:
             matchExpressions:
-              - key: security
+              - key: performance-tier
+                operator: Exists
+        - weight: 3
+          preference:
+            matchExpressions:
+              - key: temperature-zone
+                operator: NotIn
+                values:
+                  - hot
+
+    ############################################################
+    # 🤝 POD AFFINITY — współlokacja z INNYMI PODAMI
+    ############################################################
+    podAffinity:
+      # 🔸 Twarde wymagania — Pod musi być zaplanowany tam,
+      # gdzie działa inny Pod z odpowiednim labelem
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app
                 operator: In
                 values:
-                  - S1 # Pods with the label key `security` and value `S1`
+                  - backend
+              - key: security
+                operator: Exists
+          topologyKey: "kubernetes.io/hostname" # współlokacja na tym samym node
+        - labelSelector:
+            matchLabels:
+              tier: database
+          topologyKey: "topology.kubernetes.io/zone" # współlokacja w tej samej strefie
+
+      # 🔹 Miękkie preferencje — scheduler preferuje, ale nie wymaga współlokacji
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: env
+                  operator: In
+                  values:
+                    - prod
+            topologyKey: "topology.kubernetes.io/region"
+        - weight: 50
+          podAffinityTerm:
+            labelSelector:
+              matchLabels:
+                component: cache
+            topologyKey: "kubernetes.io/hostname"
+
+    ############################################################
+    # 🚫 POD ANTI-AFFINITY — unikanie innych PODÓW
+    ############################################################
+    podAntiAffinity: {}
