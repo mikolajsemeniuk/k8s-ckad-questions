@@ -25,6 +25,7 @@ spec:
     # only supported on container level and not pod
     # capabilities:
     # add: ["MAC_ADMIN"]
+    # drop: ["ALL"]
     # allowPrivilegeEscalation: false  # add
     # privileged: false                # add
   containers:
