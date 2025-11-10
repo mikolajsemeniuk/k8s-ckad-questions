@@ -22,7 +22,7 @@ metadata:
     app: my-app
 spec:
   serviceName: my-app-headless # The headless service used to manage the network identity.
-  replicas: 3 
+  replicas: 3
   selector:
     matchLabels:
       app: nginx
