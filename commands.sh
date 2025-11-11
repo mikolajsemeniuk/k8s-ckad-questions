@@ -1,6 +1,6 @@
 k rollout history --revision=2
 k rollout restart
-k rollout status	
+k rollout status
 k rollout undo --to-revision=4
 
 k create secret generic secret1 --from-literal user=test --from-literal pass=pwd
