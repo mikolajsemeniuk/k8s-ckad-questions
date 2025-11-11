@@ -1,0 +1,20 @@
+# /etc/kubernetes/kubelet.conf
+
+apiVersion: v1
+kind: Config
+clusters:
+- cluster:
+    certificate-authority-data: <BASE64_CA>
+    server: https://<CONTROL_PLANE_IP>:6443
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: system:node:<NODE_NAME>
+  name: system:node:<NODE_NAME>@kubernetes
+current-context: system:node:<NODE_NAME>@kubernetes
+users:
+- name: system:node:<NODE_NAME>
+  user:
+    client-certificate: /var/lib/kubelet/pki/kubelet-client-current.pem
+    client-key: /var/lib/kubelet/pki/kubelet-client-current.pem
