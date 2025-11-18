@@ -10,6 +10,7 @@ metadata:
     description: "This is a sample pod with multiple containers, volume mounts, and advanced configurations." # Annotations provide metadata that can be used by external tools
 
 spec:
+  nodeName: node-1 # Node name to schedule the Pod on
   restartPolicy: Always # Restart policy for the Pod (Always, OnFailure, Never)
   dnsPolicy: Default # DNS policy for the Pod
   hostNetwork: false # Whether to use the host's network namespace
