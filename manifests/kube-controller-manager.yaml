@@ -13,9 +13,9 @@ spec:
         - --authentication-kubeconfig=/etc/kubernetes/controller-manager.conf
         - --authorization-kubeconfig=/etc/kubernetes/controller-manager.conf
         - --bind-address=127.0.0.1
+        - --leader-elect=true
         - --cluster-signing-cert-file=/etc/kubernetes/pki/ca.crt
         - --cluster-signing-key-file=/etc/kubernetes/pki/ca.key
-        - --leader-elect=true
         - --use-service-account-credentials=true
   hostNetwork: true
   volumes:
