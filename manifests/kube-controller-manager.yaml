@@ -5,20 +5,20 @@ metadata:
   namespace: kube-system
 spec:
   containers:
-  - name: kube-controller-manager
-    image: registry.k8s.io/kube-controller-manager:v1.30.0
-    command:
-    - kube-controller-manager
-    - --authentication-kubeconfig=/etc/kubernetes/controller-manager.conf
-    - --authorization-kubeconfig=/etc/kubernetes/controller-manager.conf
-    - --bind-address=127.0.0.1
-    - --cluster-signing-cert-file=/etc/kubernetes/pki/ca.crt
-    - --cluster-signing-key-file=/etc/kubernetes/pki/ca.key
-    - --kubeconfig=/etc/kubernetes/controller-manager.conf
-    - --leader-elect=true
-    - --use-service-account-credentials=true
+    - name: kube-controller-manager
+      image: registry.k8s.io/kube-controller-manager:v1.30.0
+      command:
+        - kube-controller-manager
+        - --kubeconfig=/etc/kubernetes/controller-manager.conf
+        - --authentication-kubeconfig=/etc/kubernetes/controller-manager.conf
+        - --authorization-kubeconfig=/etc/kubernetes/controller-manager.conf
+        - --bind-address=127.0.0.1
+        - --cluster-signing-cert-file=/etc/kubernetes/pki/ca.crt
+        - --cluster-signing-key-file=/etc/kubernetes/pki/ca.key
+        - --leader-elect=true
+        - --use-service-account-credentials=true
   hostNetwork: true
   volumes:
-  - name: k8s-certs
-    hostPath:
-      path: /etc/kubernetes/pki
+    - name: k8s-certs
+      hostPath:
+        path: /etc/kubernetes/pki
