@@ -5,30 +5,30 @@ metadata:
   namespace: kube-system
 spec:
   containers:
-  - name: etcd
-    image: registry.k8s.io/etcd:3.5.10-0
-    command:
-    - etcd
-    - --advertise-client-urls=https://127.0.0.1:2379
-    - --listen-client-urls=https://127.0.0.1:2379
-    - --listen-peer-urls=https://127.0.0.1:2380
-    - --cert-file=/etc/kubernetes/pki/etcd/server.crt
-    - --key-file=/etc/kubernetes/pki/etcd/server.key
-    - --peer-cert-file=/etc/kubernetes/pki/etcd/peer.crt
-    - --peer-key-file=/etc/kubernetes/pki/etcd/peer.key
-    - --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
-    - --data-dir=/var/lib/etcd
-    volumeMounts:
-    - mountPath: /var/lib/etcd
-      name: etcd-data
-    - mountPath: /etc/kubernetes/pki/etcd
-      name: etcd-certs
-      readOnly: true
+    - name: etcd
+      image: registry.k8s.io/etcd:3.5.10-0
+      command:
+        - etcd
+        - --advertise-client-urls=https://127.0.0.1:2379
+        - --listen-client-urls=https://127.0.0.1:2379
+        - --listen-peer-urls=https://127.0.0.1:2380
+        - --cert-file=/etc/kubernetes/pki/etcd/server.crt
+        - --key-file=/etc/kubernetes/pki/etcd/server.key
+        - --peer-cert-file=/etc/kubernetes/pki/etcd/peer.crt
+        - --peer-key-file=/etc/kubernetes/pki/etcd/peer.key
+        - --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+        - --data-dir=/var/lib/etcd
+      volumeMounts:
+        - mountPath: /var/lib/etcd
+          name: etcd-data
+        - mountPath: /etc/kubernetes/pki/etcd
+          name: etcd-certs
+          readOnly: true
   hostNetwork: true
   volumes:
-  - name: etcd-data
-    hostPath:
-      path: /var/lib/etcd
-  - name: etcd-certs
-    hostPath:
-      path: /etc/kubernetes/pki/etcd
+    - name: etcd-data
+      hostPath:
+        path: /var/lib/etcd
+    - name: etcd-certs
+      hostPath:
+        path: /etc/kubernetes/pki/etcd

@@ -5,32 +5,32 @@ metadata:
   namespace: kube-system
 spec:
   containers:
-  - name: kube-apiserver
-    image: registry.k8s.io/kube-apiserver:v1.30.0
-    command:
-    - kube-apiserver
-    - --advertise-address=192.168.0.10
-    - --allow-privileged=true
-    - --authorization-mode=Node,RBAC
-    - --client-ca-file=/etc/kubernetes/pki/ca.crt
-    - --etcd-servers=https://127.0.0.1:2379
-    - --etcd-cafile=/etc/kubernetes/pki/etcd/ca.crt
-    - --etcd-certfile=/etc/kubernetes/pki/apiserver-etcd-client.crt
-    - --etcd-keyfile=/etc/kubernetes/pki/apiserver-etcd-client.key
-    - --kubelet-client-certificate=/etc/kubernetes/pki/apiserver-kubelet-client.crt
-    - --kubelet-client-key=/etc/kubernetes/pki/apiserver-kubelet-client.key
-    - --service-account-key-file=/etc/kubernetes/pki/sa.pub
-    - --service-cluster-ip-range=10.96.0.0/12
-    - --tls-cert-file=/etc/kubernetes/pki/apiserver.crt
-    - --tls-private-key-file=/etc/kubernetes/pki/apiserver.key
-    - --enable-bootstrap-token-auth=true
-    - --secure-port=6443
-    volumeMounts:
-    - mountPath: /etc/kubernetes/pki
-      name: k8s-certs
-      readOnly: true
+    - name: kube-apiserver
+      image: registry.k8s.io/kube-apiserver:v1.30.0
+      command:
+        - kube-apiserver
+        - --advertise-address=192.168.0.10
+        - --allow-privileged=true
+        - --authorization-mode=Node,RBAC
+        - --client-ca-file=/etc/kubernetes/pki/ca.crt
+        - --etcd-servers=https://127.0.0.1:2379
+        - --etcd-cafile=/etc/kubernetes/pki/etcd/ca.crt
+        - --etcd-certfile=/etc/kubernetes/pki/apiserver-etcd-client.crt
+        - --etcd-keyfile=/etc/kubernetes/pki/apiserver-etcd-client.key
+        - --kubelet-client-certificate=/etc/kubernetes/pki/apiserver-kubelet-client.crt
+        - --kubelet-client-key=/etc/kubernetes/pki/apiserver-kubelet-client.key
+        - --service-account-key-file=/etc/kubernetes/pki/sa.pub
+        - --service-cluster-ip-range=10.96.0.0/12
+        - --tls-cert-file=/etc/kubernetes/pki/apiserver.crt
+        - --tls-private-key-file=/etc/kubernetes/pki/apiserver.key
+        - --enable-bootstrap-token-auth=true
+        - --secure-port=6443
+      volumeMounts:
+        - mountPath: /etc/kubernetes/pki
+          name: k8s-certs
+          readOnly: true
   hostNetwork: true
   volumes:
-  - name: k8s-certs
-    hostPath:
-      path: /etc/kubernetes/pki
+    - name: k8s-certs
+      hostPath:
+        path: /etc/kubernetes/pki
