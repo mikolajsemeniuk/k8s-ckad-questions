@@ -21,8 +21,8 @@ spec:
         - --kubelet-client-key=/etc/kubernetes/pki/apiserver-kubelet-client.key
         - --tls-cert-file=/etc/kubernetes/pki/apiserver.crt
         - --tls-private-key-file=/etc/kubernetes/pki/apiserver.key
-        - --service-cluster-ip-range=10.96.0.0/12
         - --service-account-key-file=/etc/kubernetes/pki/sa.pub
+        - --service-cluster-ip-range=10.96.0.0/12
         - --enable-bootstrap-token-auth=true
         - --secure-port=6443
       volumeMounts:
