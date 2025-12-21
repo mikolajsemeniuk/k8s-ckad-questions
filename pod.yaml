@@ -14,6 +14,8 @@ spec:
   dnsPolicy: Default # DNS policy for the Pod
   hostNetwork: false # Whether to use the host's network namespace
   nodeName: node-1 # Node name to schedule the Pod on
+  hostname: my-pod-hostname # Hostname for the Pod
+  subdomain: my-subdomain # Subdomain for the Pod
   serviceAccountName: my-service-account # Service account to be used
   priorityClassName: high-priority # Priority class for the Pod
   schedulerName: default-scheduler # Scheduler to be used
@@ -160,23 +162,23 @@ spec:
         nodeSelectorTerms:
           - matchExpressions:
               - key: kubernetes.io/e2e-az-name
-                operator: In           # Node label value must be in the list
+                operator: In # Node label value must be in the list
                 values:
                   - e2e-az1
               - key: size
-                operator: NotIn        # Node label value must NOT be in the list
+                operator: NotIn # Node label value must NOT be in the list
                 values:
                   - small
               - key: disk-type
-                operator: Exists       # Node must have this label (any value)
+                operator: Exists # Node must have this label (any value)
               - key: gpu
                 operator: DoesNotExist # Node must NOT have this label
               - key: cpu-count
-                operator: Gt           # Node label value (numeric) must be > X
+                operator: Gt # Node label value (numeric) must be > X
                 values:
                   - "4"
               - key: memory-size-gb
-                operator: Lt           # Node label value (numeric) must be < X
+                operator: Lt # Node label value (numeric) must be < X
                 values:
                   - "128"
 
