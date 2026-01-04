@@ -1,0 +1,119 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# =========================
+# 1️⃣ resources
+# =========================
+# Lista manifestów Kubernetes, które Kustomize ma wziąć jako bazę.
+# Mogą to być:
+# - pliki YAML
+# - katalogi (z innym kustomization.yaml)
+resources:
+  - deployment.yaml
+  - service.yaml
+  - pvc.yaml
+
+# =========================
+# 2️⃣ namePrefix / nameSuffix
+# =========================
+# Dodaje prefiks/sufiks do NAZW WSZYSTKICH zasobów.
+# Bardzo częste na CKA do rozróżniania środowisk.
+namePrefix: prod-
+nameSuffix: -v1
+
+# =========================
+# 3️⃣ namespace
+# =========================
+# Ustawia namespace dla wszystkich zasobów,
+# nawet jeśli w oryginalnych YAML-ach go nie ma.
+namespace: production
+
+# =========================
+# 4️⃣ labels
+# =========================
+# Dodaje (lub nadpisuje) labels we WSZYSTKICH zasobach.
+# Przydatne do:
+# - selektorów
+# - NetworkPolicy
+# - monitoringu
+labels:
+  - pairs:
+      environment: production
+      app: my-app
+
+# =========================
+# 5️⃣ images
+# =========================
+# Pozwala zmienić image / tag BEZ edycji Deployment.yaml.
+# Kustomize znajdzie wszystkie wystąpienia tego image.
+images:
+  - name: nginx
+    newName: nginx
+    newTag: "1.25"
+
+# =========================
+# 6️⃣ replicas
+# =========================
+# Ustawia liczbę replik dla konkretnego Deploymentu.
+# Bardzo częste zadanie egzaminacyjne.
+replicas:
+  - name: web
+    count: 3
+
+# =========================
+# 7️⃣ configMapGenerator
+# =========================
+# Generuje ConfigMap automatycznie.
+# Kustomize:
+# - doda hash do nazwy
+# - automatycznie podmieni referencje w Podach
+configMapGenerator:
+  - name: app-config
+    literals:
+      - LOG_LEVEL=info
+      - FEATURE_X=true
+
+# =========================
+# 8️⃣ secretGenerator
+# =========================
+# Generuje Secret (domyślnie type Opaque).
+# Na CKA często używane zamiast ręcznego pisania Secretów.
+secretGenerator:
+  - name: app-secret
+    literals:
+      - password=supersecret
+
+# =========================
+# 9️⃣ patchesStrategicMerge
+# =========================
+# Najczęściej używany patch na CKA.
+# Nadpisuje TYLKO wskazane pola.
+# Patch musi zawierać:
+# - apiVersion
+# - kind
+# - metadata.name
+patchesStrategicMerge:
+  - patch-replicas.yaml
+  - patch-resources.yaml
+
+# =========================
+# 🔟 patches (JSON 6902)
+# =========================
+# Bardziej precyzyjny patch (operacje replace/add/remove).
+# Rzadziej, ale czasem potrzebny.
+patches:
+  - target:
+      kind: Deployment
+      name: web
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: "500m"
+
+# =========================
+# 1️⃣1️⃣ commonAnnotations
+# =========================
+# Dodaje annotations do wszystkich zasobów.
+# Często używane do metadanych lub narzędzi CI/CD.
+commonAnnotations:
+  managed-by: kustomize

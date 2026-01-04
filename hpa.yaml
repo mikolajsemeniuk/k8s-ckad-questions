@@ -5,6 +5,9 @@ metadata:
 spec:
   minReplicas: 1
   maxReplicas: 10
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment

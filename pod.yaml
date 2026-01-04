@@ -39,6 +39,7 @@ spec:
       ports:
         - containerPort: 8080 # Port exposed by the container
           hostPort: 8080
+          protocol: TCP
       env:
         - name: ENV_VAR_1
           value: "value1" # Static environment variable

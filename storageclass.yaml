@@ -4,6 +4,12 @@ metadata:
   name: moon-retain
   # nazwa StorageClass; PVC może się do niej odwołać przez spec.storageClassName
 
+  annotations:
+    # Ta adnotacja oznacza, że TA StorageClass jest DOMYŚLNA
+    # Jeśli PVC nie poda spec.storageClassName,
+    # Kubernetes automatycznie użyje tej klasy.
+    storageclass.kubernetes.io/is-default-class: "true"
+
 # provisioner (CSI lub in-tree) który faktycznie tworzy wolumeny.
 # Przykłady:
 # - kubernetes.io/no-provisioner (dla local static provisioning)
@@ -29,8 +35,6 @@ allowVolumeExpansion: true
 # parameters: parametry specyficzne dla provisionera/drivera (zależy od CSI).
 # Np. typ dysku, IOPS, encryption, fsType itd.
 parameters:
-  # przykład "fsType" – często spotykane w CSI
-  # (uwaga: konkretne klucze zależą od drivera, tu pokaz jako wzorzec)
   fsType: ext4
 
 # mountOptions: opcje montowania filesystemu (dla FS mode, nie dla Block).
