@@ -5,7 +5,8 @@ metadata:
   namespace: your-namespace
 spec:
   limits:
-    - default: # sets default limit
+    - type: Container
+      default: # sets default limit
         cpu: 500m # Default CPU limit for a container in this namespace (0.5 vCPU)
         memory: 256Mi # Default memory limit for a container in this namespace
       defaultRequest:
@@ -17,4 +18,3 @@ spec:
       min:
         cpu: 100m # Minimum CPU request a container can make (0.1 vCPU)
         memory: 64Mi # Minimum memory request a container can make
-      type: Container

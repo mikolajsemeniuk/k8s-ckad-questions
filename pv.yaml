@@ -2,12 +2,60 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: existing-pv
+  labels:
+    # labels pomagają w statycznym dopasowaniu PV<->PVC przez selector w PVC
+    app: demo
 spec:
+  # capacity musi być >= żądania PVC (resources.requests.storage)
   capacity:
     storage: 10Gi
+
+  # volumeMode:
+  # - Filesystem (domyślne) -> montowany jak katalog
+  # - Block -> surowy blok (podajesz w pod.volumeDevices)
+  volumeMode: Filesystem
+
+  # accessModes:
+  # - ReadWriteOnce (RWO)     -> read/write na jednym node naraz (najczęstsze)
+  # - ReadOnlyMany (ROX)      -> read-only na wielu node'ach
+  # - ReadWriteMany (RWX)     -> read/write na wielu node'ach (np. NFS, CephFS)
+  # - ReadWriteOncePod (RWOP) -> R/W tylko przez jeden Pod (nowsze, nie wszędzie używane)
   accessModes:
-    - ReadWriteOnce # ReadOnlyMany ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain # Delete Recycle
+    - ReadWriteOnce
+
+  # reclaimPolicy (dla PV; nadpisuje zachowanie po usunięciu PVC):
+  # - Retain -> dane zostają, PV Released
+  # - Delete -> usuń wolumen (zależne od typu/provisionera)
+  # - Recycle -> historyczne/wycofywane (CKA: raczej nie używać)
+  persistentVolumeReclaimPolicy: Retain
+
+  # storageClassName: musi pasować do PVC.spec.storageClassName,
+  # chyba że PVC wskaże PV bezpośrednio przez volumeName.
   storageClassName: manual
+
+  # claimRef: pojawia się automatycznie po zbindowaniu,
+  # ale można też ręcznie pre-bind PV do konkretnego PVC (rzadziej).
+  # claimRef:
+  #   namespace: default
+  #   name: existing-pv-claim
+
+  # hostPath: tylko do labów/egzaminu/single-node; NIE jest HA.
+  # typowe dla zadań CKA "na szybko".
   hostPath:
     path: "/mnt/data"
+    # type opcjonalnie:
+    # - DirectoryOrCreate (utwórz jeśli nie istnieje)
+    # - Directory, File, FileOrCreate, Socket, CharDevice, BlockDevice
+    type: DirectoryOrCreate
+
+  # nodeAffinity: jeśli PV jest "lokalny" (hostPath/local),
+  # warto związać go z node, żeby scheduler nie próbował odpalić poda gdzie indziej.
+  # Bez tego możesz mieć Pod Pending, bo wolumen "fizycznie" jest na innym node.
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - node-1

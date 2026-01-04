@@ -2,5 +2,38 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: moon-retain
+  # nazwa StorageClass; PVC może się do niej odwołać przez spec.storageClassName
+
+# provisioner (CSI lub in-tree) który faktycznie tworzy wolumeny.
+# Przykłady:
+# - kubernetes.io/no-provisioner (dla local static provisioning)
+# - csi: ebs.csi.aws.com, pd.csi.storage.gke.io, disk.csi.azure.com
+# - in-tree (starsze): kubernetes.io/aws-ebs, kubernetes.io/gce-pd
 provisioner: moon-retainer
+
+# reclaimPolicy określa co ma się stać z fizycznym wolumenem po usunięciu PVC:
+# - Delete  -> usuń zasób storage (typowe dla chmury)
+# - Retain  -> zostaw dane, PV przechodzi w Released (wymaga manual cleanup)
 reclaimPolicy: Retain
+
+# volumeBindingMode wpływa KIEDY PVC zostanie zbindowany do PV (głównie w dynamic provisioning):
+# - Immediate -> bind od razu po utworzeniu PVC (domyślne)
+# - WaitForFirstConsumer -> bind dopiero gdy powstanie Pod używający PVC
+#   (ważne przy topologii: strefy/AZ, local volumes, node affinity)
+volumeBindingMode: WaitForFirstConsumer
+
+# allowVolumeExpansion: czy można później zwiększyć PVC (jeśli driver wspiera):
+# - true / false
+allowVolumeExpansion: true
+
+# parameters: parametry specyficzne dla provisionera/drivera (zależy od CSI).
+# Np. typ dysku, IOPS, encryption, fsType itd.
+parameters:
+  # przykład "fsType" – często spotykane w CSI
+  # (uwaga: konkretne klucze zależą od drivera, tu pokaz jako wzorzec)
+  fsType: ext4
+
+# mountOptions: opcje montowania filesystemu (dla FS mode, nie dla Block).
+# Przykłady: noatime, nodiratime, discard
+mountOptions:
+  - noatime

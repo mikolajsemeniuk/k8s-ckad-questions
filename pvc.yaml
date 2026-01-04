@@ -2,10 +2,29 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: existing-pv-claim
+  namespace: default
 spec:
+  # volumeName: twarde wskazanie PV, do którego PVC ma się zbindować.
+  # To omija "wyszukiwanie" po storageClass/selector i jest bardzo przydatne na egzaminie.
+  volumeName: existing-pv
+
+  # storageClassName: przy volumeName zwykle można pominąć,
+  # ale jeśli podasz, musi być spójne z PV.storageClassName (albo binding może nie zajść).
+  storageClassName: manual
+
+  # accessModes muszą być kompatybilne z PV.accessModes
   accessModes:
-    - ReadWriteOnce # ReadOnlyMany ReadWriteMany
-  storageClassName: existing-pv
+    - ReadWriteOnce
+
+  # resources.requests.storage <= PV.capacity.storage
   resources:
     requests:
       storage: 10Gi
+
+  # selector: alternatywa dla volumeName (wiązanie przez labels PV).
+  # selector:
+  #   matchLabels:
+  #     app: demo
+
+  # volumeMode musi pasować do PV.volumeMode (Filesystem/Block)
+  volumeMode: Filesystem
